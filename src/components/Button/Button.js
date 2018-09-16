@@ -5,6 +5,7 @@ const ButtonSmall = props => {
   return (
     <button
       className="button-small"
+      onClick={ props.onClick }
     >
       { props.title }
     </button>
