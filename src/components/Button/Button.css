@@ -1,0 +1,17 @@
+.button-small {
+  background-color: #1DB954;
+  color: white;
+  text-transform: uppercase;
+  border: none;
+  padding: 20px 50px;
+  font-size: 1.2em;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all .2s ease-in-out;
+  box-shadow: 0 0 20px 1px rgba(30,215,96,0.5);
+  outline: none;
+}
+.button-small:hover {
+  background-color: #1ED760;
+  box-shadow: 0 0 25px 1px rgba(30,215,96,0.75);
+}
