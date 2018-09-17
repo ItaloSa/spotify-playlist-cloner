@@ -66,7 +66,7 @@ class SearchContainer extends Component {
           "animated fadeInDown fast",
           this.state.search.length ? "show" : ""
         )}>
-          <p>Spotify Playlist Cloner</p>
+          <p>🎶 Spotify Playlist Cloner</p>
           <div className="search">
             <DebounceInput
               minLength={2}
