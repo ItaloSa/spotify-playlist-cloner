@@ -1,7 +1,7 @@
 import { UPDATE_VALUE } from '../actions/actionTypes';
 
 const initialState = {
-  authInfo: 'Atualizado via Redux!'
+  data: 'Atualizado via Redux!'
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -9,7 +9,7 @@ export const authReducer = (state = initialState, action) => {
     case UPDATE_VALUE:
       return {
         ...state,
-        authInfo: action.authInfo
+        data: action.data
       };
     default:
       return state;
