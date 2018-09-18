@@ -3,12 +3,14 @@ import './Button.css';
 
 const ButtonSmall = props => {
   return (
-    <button
-      className="button-small"
-      onClick={ props.onClick }
-    >
-      { props.title }
-    </button>
+    <div>
+      <button
+        className="button-small"
+        onClick={ props.onClick }
+      >
+        { props.title }
+      </button>
+    </div>
   );
 };
 
