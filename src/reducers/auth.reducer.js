@@ -1,7 +1,9 @@
 import { UPDATE_VALUE } from '../actions/actionTypes';
 
 const initialState = {
-  data: 'Atualizado via Redux!'
+  accessToken: null,
+  tokenType: null,
+  error: null
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -9,7 +11,9 @@ export const authReducer = (state = initialState, action) => {
     case UPDATE_VALUE:
       return {
         ...state,
-        data: action.data
+        accessToken: action.accessToken,
+        tokenType: action.tokenType,
+        error: action.error
       };
     default:
       return state;
