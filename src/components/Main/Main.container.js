@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import './Main.css';
 
 import ButtonSmall from '../Button/Button';
+import Search from '../Search/SearchContainer';
 
 class MainConatiner extends Component {
   constructor(props) {
@@ -23,7 +24,9 @@ class MainConatiner extends Component {
 
   render() {
     return (
-      this.isAuth() ? null : (
+      this.isAuth() ? (
+        <Search authData={ this.props.authData } />
+      ) : (
         <div className="login">
             <ButtonSmall title="Login on Spotify" onClick={this.login}></ButtonSmall>
         </div>

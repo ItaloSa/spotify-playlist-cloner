@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import Axios from 'axios';
 import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
+import isURL from 'is-url';
 import './Search.css';
 
 import Playlist from '../Playlist/Playlist';
+import Loading from '../Loading/LoadingContainer';
 
 class SearchContainer extends Component {
   constructor(props) {
@@ -14,72 +17,98 @@ class SearchContainer extends Component {
       loading: false,
       error: false,
       playlists: [],
-      examplePlaylists: [
-        {
-          image: 'https://mosaic.scdn.co/640/19a246a2d394ee49a2a021de8206c97a860a0222ab37575ba703a95760cec2e350b05b90f339b59cdb55d945b33d869b32936e8aca1322de86d79e29eb0411e7cbd72e7754e5eb17615ab0ae71da368b',
-          title: 'Só Pedrada 👽',
-          author: 'adriel1303',
-          followers: 3
-        },
-        {
-          image: 'https://charts-images.scdn.co/VIRAL_GLOBAL_DEFAULT.jpg',
-          title: 'Global Viral 50',
-          author: 'spotifycharts',
-          followers: 1033192
-        },
-        {
-          image: 'https://pl.scdn.co/images/pl/default/2b42d0ae2fd62fd30604b42f50934a3ad5fb7bb2',
-          title: 'SÓ TRACK BOA',
-          author: 'nuwaveselects',
-          followers: 7579
-        },
-        {
-          image: 'https://i.scdn.co/image/75b268ded32d739bd7d14ce37b7a035b307ab3a6',
-          title: 'mint BR',
-          author: 'Spotify',
-          followers: 344942
-        }
-      ]
+      playlist: ''
+    };
+
+    this.http = Axios.create({
+      baseURL: 'https://api.spotify.com/v1/',
+      headers: {
+        Authorization: `${this.props.authData.tokenType} ${this.props.authData.accessToken}`
+      }
+    });
+
+    this.clearURL = url => {
+      let start = 0;
+      let end = url.length;
+
+      if (url.indexOf('?si=') > 0) {
+        end = url.indexOf('?si=');
+        url = url.slice(0, end);
+      }
+
+      start = url.indexOf('/playlist/') + '/playlist/'.length;
+
+      return url.slice(start, end);
     };
   }
 
-  changePlaylists = total => {
-    let playlists = this.state.examplePlaylists;
+  searchPlaylist = async name => {
+    try {
+      const playlists = await this.http.get(`search?q=${name}&type=playlist&limit=15`);
+      this.setState({ playlists: playlists.data.playlists.items });
+    } catch (err) {
+      alert('Error!');
+      console.log(err);
+    }
+  };
 
-    if (total) {
-      this.setState({ playlists: playlists });
-    } else {
-      this.setState({ playlists: [] });
+  getPlaylistByURL = async url => {
+    const newURL = this.clearURL(url);
+    try {
+      const playlist = await this.http.get(`playlists/${newURL}`);
+      this.setState({ playlists: [ playlist.data ] });
+    } catch (err) {
+      alert('Error!');
+      console.log(err);
     }
   };
 
   handleChange = event => {
-    this.setState({ search: event.target.value, error: false });
-    this.changePlaylists(event.target.value.length);
+    let text = event.target.value;
+    this.setState({ search: text, error: false });
+
+    if (!text.length)
+      this.setState({ playlists: [] });
+
+    if (!isURL(text)) {
+      this.searchPlaylist(text);
+    } else {
+      this.getPlaylistByURL(text);
+    }
+  };
+
+  handleClick = event => {
+    const target = event.target;
+    const element = target.closest('.playlist-card');
+    this.setState({ playlist: element.getAttribute('data-id') });
   };
 
   render() {
     return (
-      <div>
-        <div className={classNames(
-          "header",
-          "animated fadeInDown fast",
-          this.state.search.length ? "show" : ""
-        )}>
-          <p>🎶 Spotify Playlist Cloner</p>
-          <div className="search">
-            <DebounceInput
-              minLength={2}
-              debounceTimeout={300}
-              type="search"
-              onChange={ this.handleChange }
-              placeholder="Search playlist"
-            />
+      this.state.playlist.length ? (
+        <Loading progress={30} text="Cloning playlist..." />
+      ) : (
+        <div>
+          <div className={classNames(
+            "header",
+            "animated fadeInDown fast",
+            this.state.search.length ? "show" : ""
+          )}>
+            <p>🎶 Spotify Playlist Cloner</p>
+            <div className="search">
+              <DebounceInput
+                minLength={2}
+                debounceTimeout={300}
+                type="search"
+                onChange={ this.handleChange }
+                placeholder="Search playlist name or URL"
+              />
+            </div>
           </div>
-        </div>
 
-        <Playlist data={ this.state.playlists } />
-      </div>
+          <Playlist data={ this.state.playlists } onClick={ this.handleClick } />
+        </div>
+      )
     );
   }
 }

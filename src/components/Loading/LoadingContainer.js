@@ -10,7 +10,7 @@ class Loading extends Component {
 
   render() {
     return (
-      <div className="loading">
+      <div className="loading animated fadeIn">
         <div className="loading-progress" style={{ height: this.props.progress + 'vh' }}></div>
         <div className="loading-content">
           <div className="loading-icon">
