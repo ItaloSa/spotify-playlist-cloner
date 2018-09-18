@@ -7,13 +7,15 @@ const initialState = {
 };
 
 export const authReducer = (state = initialState, action) => {
+  console.log(action);
   switch (action.type) {
     case UPDATE_VALUE:
+      console.log('aq', action.authData.access_token);
       return {
         ...state,
-        accessToken: action.accessToken,
-        tokenType: action.tokenType,
-        error: action.error
+        accessToken: action.authData.access_token,
+        tokenType: action.authData.token_type,
+        error: action.authData.error
       };
     default:
       return state;

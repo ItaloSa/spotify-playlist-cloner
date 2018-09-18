@@ -1,36 +1,35 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { setAuthData } from '../../actions';
 import { bindActionCreators } from 'redux';
+import swal from 'sweetalert';
+
+import { setAuthData } from '../../actions';
+
 
 class Auth extends Component {
   constructor(props) {
     super(props);
     this.data = props.authData;
+    console.log(props);
     this.authData();
   }
 
   authData() {
     const hashData = queryString.parse(this.props.location.hash);
     if (hashData.error) {
-      console.log("error");
+      swal("Error on auth!");
+      this.props.history.push("/");
       return;
     }
     console.log('set!');
     this.props.setAuthData(hashData);
     console.log('after', this.props);
+    this.props.history.push("/");
   }
 
   render() {
-  const {setAuthData} = this.props;
-    return (
-      <div>
-        <button onClick={() => setAuthData(this.state.inputValue)}>
-          Click me!
-        </button>
-      </div>
-    );
+    return (null);
   }
 
 }
@@ -40,6 +39,6 @@ const mapStateToProps = store => ({
 });
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ setAuthData }, dispatch);
+  bindActionCreators( { setAuthData }, dispatch );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);
