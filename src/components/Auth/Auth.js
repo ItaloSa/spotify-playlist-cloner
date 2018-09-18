@@ -20,12 +20,13 @@ class Auth extends Component {
     if (hashData.error) {
       swal("Error on auth!");
       this.props.history.push("/");
-      return;
+    } else {
+      console.log('set!');
+      this.props.setAuthData(hashData);
+      console.log('after', this.props);
+      this.props.history.push("/");
     }
-    console.log('set!');
-    this.props.setAuthData(hashData);
-    console.log('after', this.props);
-    this.props.history.push("/");
+
   }
 
   render() {
