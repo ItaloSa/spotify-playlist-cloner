@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import { bindActionCreators } from 'redux';
 import swal from 'sweetalert';
 
-import { setAuthData } from '../../actions';
+import { setAuthData } from '../actions';
 
 class Auth extends Component {
   constructor(props) {
