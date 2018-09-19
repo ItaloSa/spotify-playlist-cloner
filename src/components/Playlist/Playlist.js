@@ -13,16 +13,16 @@ class Playlist extends Component {
       <div className="container playlists">
         <div className="row">
           {this.props.data.map(playlist => (
-            <div className="col-xs-12 col-md-6 col-lg-4 col-xl-3" key={ playlist.id } onClick={ this.props.onClick }>
+            <div className="col-xs-12 col-md-4 col-xl-3" key={ playlist.id } onClick={ this.props.onClick }>
               <div className="playlist-card animated fadeIn" data-id={ playlist.id } >
-                <img src={ playlist.images[0].url } alt="Playlist cover" />
+                <div className="playlist-image" style={{ backgroundImage: `url(${playlist.images[0].url})` }}>
+                  <div className="playlist-select">
+                    <i className="fa fa-plus-circle"></i>
+                  </div>
+                </div>
                 <h3>{ playlist.name }</h3>
                 <p>By { playlist.owner.display_name ? playlist.owner.display_name : playlist.owner.id }</p>
                 <p className="followers">{ abbreviate(playlist.tracks.total, 1) } tracks</p>
-
-                <div className="playlist-select">
-                  <i className="fa fa-plus-circle"></i>
-                </div>
               </div>
             </div>
           ))}

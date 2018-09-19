@@ -68,8 +68,10 @@ class SearchContainer extends Component {
     let text = event.target.value;
     this.setState({ search: text, error: false });
 
-    if (!text.length)
+    if (!text.length) {
       this.setState({ playlists: [] });
+      return;
+    }
 
     if (!isURL(text)) {
       this.searchPlaylist(text);
