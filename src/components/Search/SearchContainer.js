@@ -3,6 +3,7 @@ import Axios from 'axios';
 import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
 import isURL from 'is-url';
+import { connect } from 'react-redux';
 import './Search.css';
 
 import Playlist from '../Playlist/Playlist';
@@ -94,7 +95,7 @@ class SearchContainer extends Component {
             "animated fadeInDown fast",
             this.state.search.length ? "show" : ""
           )}>
-            <p>🎶 Spotify Playlist Cloner</p>
+            <p><span role="img" aria-label="musical note">🎶</span> Spotify Playlist Cloner</p>
             <div className="search">
               <DebounceInput
                 minLength={2}
@@ -113,4 +114,8 @@ class SearchContainer extends Component {
   }
 }
 
-export default SearchContainer;
+const mapStateToProps = store => ({
+  authData: store.authState
+});
+
+export default connect(mapStateToProps)(SearchContainer);

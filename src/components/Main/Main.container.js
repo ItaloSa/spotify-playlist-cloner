@@ -25,7 +25,7 @@ class MainConatiner extends Component {
   render() {
     return (
       this.isAuth() ? (
-        <Search authData={ this.props.authData } />
+        <Search />
       ) : (
         <div className="login">
             <ButtonSmall title="Login on Spotify" onClick={this.login}></ButtonSmall>
