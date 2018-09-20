@@ -48,11 +48,11 @@ class SearchContainer extends Component {
   searchPlaylist = async name => {
     this.setState({ loading: true });
     try {
-      const playlists = await this.http.get(`search?q=${name}&type=playlist&limit=15`);
+      const playlists = await this.http.get(`search?q=${name}&type=playlist&limit=16`);
       this.setState({ playlists: playlists.data.playlists.items });
 
       if (!playlists.data.playlists.items.length) {
-        swal('Ops! :(', 'Playlists not found.', 'error');
+        this.setState({ error: true });
       }
     } catch (err) {
       swal('Ops! :(', 'An error has occurred.', 'error');
@@ -69,10 +69,10 @@ class SearchContainer extends Component {
       this.setState({ playlists: [ playlist.data ] });
 
       if (![playlist.data].length) {
-        swal('Ops! :(', 'Playlist not found.', 'error');
+        this.setState({ error: true });
       }
     } catch (err) {
-      swal('Ops! :(', 'An error has occurred.', 'error');
+      this.setState({ error: true });
       console.log(err);
     }
     this.setState({ loading: false });
@@ -112,23 +112,27 @@ class SearchContainer extends Component {
         />
       ) : (
         <div>
-          <div className={classNames(
-            "header",
+          <header className={classNames(
             "animated fadeInDown fast",
             this.state.playlists.length ? "show" : ""
           )}>
-            <p><span role="img" aria-label="musical note">🎶</span> Spotify Playlist Cloner</p>
-            <div className="search">
-              <DebounceInput
-                minLength={2}
-                debounceTimeout={350}
-                type="search"
-                onChange={ this.handleChange }
-                placeholder="Search playlist name or URL"
-                disabled={ this.state.loading }
-              />
+            <div className="content animated fadeInDown fast delay">
+              <p><span role="img" aria-label="musical note">🎶</span> Spotify Playlist Cloner</p>
+              <div className="search">
+                <DebounceInput
+                  minLength={2}
+                  debounceTimeout={350}
+                  type="search"
+                  onChange={this.handleChange}
+                  placeholder="Search playlist name or URL"
+                  disabled={this.state.loading}
+                  className={classNames(
+                    this.state.error ? "animated shake fast" : ""
+                  )}
+                />
+              </div>
             </div>
-          </div>
+          </header>
 
           <div className={classNames(
             "search-loading",

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import abbreviate from 'number-abbreviate';
 import './Playlist.css';
+import bgPlaylist from './bgPlaylist.png';
 
 class Playlist extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class Playlist extends Component {
           {this.props.data.map(playlist => (
             <div className="col-xs-12 col-md-4 col-xl-3" key={ playlist.id } onClick={ this.props.onClick }>
               <div className="playlist-card animated fadeIn" data-id={ playlist.id } >
-                <div className="playlist-image" style={{ backgroundImage: `url(${playlist.images[0].url})` }}>
+                <div className="playlist-image" style={{ backgroundImage: `url(${playlist.images.length ? playlist.images[0].url : bgPlaylist})` }}>
                   <div className="playlist-select">
                     <i className="fa fa-plus-circle"></i>
                   </div>
