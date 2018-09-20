@@ -10,7 +10,7 @@ class MainConatiner extends Component {
   constructor(props) {
     super(props);
 
-    this.authUrl = "https://accounts.spotify.com/authorize?client_id=d253ce6ec3ed4723b2d6be092f8a387e&redirect_uri=http:%2F%2Flocalhost:3000%2Fauth&scope=user-read-private%20user-read-email&response_type=token&state=123";
+    this.authUrl = "https://accounts.spotify.com/authorize?client_id=d253ce6ec3ed4723b2d6be092f8a387e&redirect_uri=http:%2F%2Flocalhost:3000%2Fauth&scope=user-read-private%20user-read-email%20playlist-modify-public&response_type=token&state=123";
 
   }
 

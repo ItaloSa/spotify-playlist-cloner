@@ -5,10 +5,10 @@ import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
 import isURL from 'is-url';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import './Search.css';
 
 import Playlist from '../Playlist/Playlist';
-import Loading from '../Loading/LoadingContainer';
 import SearchLoading from './SearchLoading';
 
 class SearchContainer extends Component {
@@ -95,6 +95,7 @@ class SearchContainer extends Component {
   };
 
   handleClick = event => {
+    console.log(event.target);
     const target = event.target;
     const element = target.closest('.playlist-card');
     this.setState({ playlist: element.getAttribute('data-id') });
@@ -103,7 +104,12 @@ class SearchContainer extends Component {
   render() {
     return (
       this.state.playlist.length ? (
-        <Loading progress={30} text="Cloning playlist..." />
+        <Redirect
+          to={{
+            pathname: "/clone",
+            state: { playlist: this.state.playlist }
+          }}
+        />
       ) : (
         <div>
           <div className={classNames(
