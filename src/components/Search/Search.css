@@ -47,3 +47,17 @@
 .search input:focus {
   transform: scale(1.075);
 }
+
+.search-loading {
+  text-align: center;
+  margin-top: 70px;
+  transition: all .2s ease-in-out;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+}
+.search-loading.show {
+  visibility: visible;
+  opacity: 1;
+}

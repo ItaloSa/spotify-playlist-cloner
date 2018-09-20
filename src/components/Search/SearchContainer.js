@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
+import swal from 'sweetalert';
 import classNames from 'classnames';
 import DebounceInput from 'react-debounce-input';
 import isURL from 'is-url';
@@ -8,6 +9,7 @@ import './Search.css';
 
 import Playlist from '../Playlist/Playlist';
 import Loading from '../Loading/LoadingContainer';
+import SearchLoading from './SearchLoading';
 
 class SearchContainer extends Component {
   constructor(props) {
@@ -44,29 +46,41 @@ class SearchContainer extends Component {
   }
 
   searchPlaylist = async name => {
+    this.setState({ loading: true });
     try {
       const playlists = await this.http.get(`search?q=${name}&type=playlist&limit=15`);
       this.setState({ playlists: playlists.data.playlists.items });
+
+      if (!playlists.data.playlists.items.length) {
+        swal('Ops! :(', 'Playlists not found.', 'error');
+      }
     } catch (err) {
-      alert('Error!');
+      swal('Ops! :(', 'An error has occurred.', 'error');
       console.log(err);
     }
+    this.setState({ loading: false });
   };
 
   getPlaylistByURL = async url => {
+    this.setState({ loading: true });
     const newURL = this.clearURL(url);
     try {
       const playlist = await this.http.get(`playlists/${newURL}`);
       this.setState({ playlists: [ playlist.data ] });
+
+      if (![playlist.data].length) {
+        swal('Ops! :(', 'Playlist not found.', 'error');
+      }
     } catch (err) {
-      alert('Error!');
+      swal('Ops! :(', 'An error has occurred.', 'error');
       console.log(err);
     }
+    this.setState({ loading: false });
   };
 
   handleChange = event => {
     let text = event.target.value;
-    this.setState({ search: text, error: false });
+    this.setState({ search: text, error: false, playlists: [] });
 
     if (!text.length) {
       this.setState({ playlists: [] });
@@ -95,18 +109,26 @@ class SearchContainer extends Component {
           <div className={classNames(
             "header",
             "animated fadeInDown fast",
-            this.state.search.length ? "show" : ""
+            this.state.playlists.length ? "show" : ""
           )}>
             <p><span role="img" aria-label="musical note">🎶</span> Spotify Playlist Cloner</p>
             <div className="search">
               <DebounceInput
                 minLength={2}
-                debounceTimeout={300}
+                debounceTimeout={350}
                 type="search"
                 onChange={ this.handleChange }
                 placeholder="Search playlist name or URL"
+                disabled={ this.state.loading }
               />
             </div>
+          </div>
+
+          <div className={classNames(
+            "search-loading",
+            this.state.loading ? "show" : ""
+          )}>
+            <SearchLoading />
           </div>
 
           <Playlist data={ this.state.playlists } onClick={ this.handleClick } />
