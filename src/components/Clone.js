@@ -34,11 +34,11 @@ class Clone extends Component {
       const playlist = await this.playlist(this.state.playlist);
 
       const tracks = await this.playlistTracks(this.state.playlist);
-      this.addTracksToState(tracks.data.items);
+      await this.addTracksToState(tracks.data.items);
       console.log(user);
 
       const playlistClone = await this.createPlaylist(user.id, playlist);
-      this.getTracksURIs();
+      await this.getTracksURIs();
 
       await this.addTracksToPlaylist(playlistClone.id, playlistClone.external_urls.spotify)
     } catch (err) {
@@ -81,10 +81,11 @@ class Clone extends Component {
     }
   }
 
-  addTracksToState = (tracks) => {
+  addTracksToState = async tracks => {
     this.setState({ message: 'Saving tracks...' });
     const value = 40 / tracks.length;
-    tracks.forEach(track => {
+    await this.asyncForEach(tracks, async track => {
+      await this.delay(50);
       this.setState({
         tracks: [...this.state.tracks, track],
         percentage: this.state.percentage + value
@@ -106,10 +107,11 @@ class Clone extends Component {
     }
   }
 
-  getTracksURIs = () => {
+  getTracksURIs = async () => {
     this.setState({ message: 'Preparing tracks...' });
     const value = 40 / this.state.tracks.length;
-    this.state.tracks.forEach(track => {
+    await this.asyncForEach(this.state.tracks, async track => {
+      await this.delay(50);
       this.setState({
         uris: [...this.state.uris, track.track.uri],
         percentage: this.state.percentage + value
@@ -137,6 +139,16 @@ class Clone extends Component {
       description: 'Clone by Spotify Playlist Cloner 🎶'
     }
   }
+
+  delay = time => new Promise((resolve, reject) => {
+    setTimeout(resolve, time);
+  });
+
+  asyncForEach = async (array, callback) => {
+    for (let index = 0; index < array.length; index++) {
+      await callback(array[index], index, array);
+    }
+  };
 
   render() {
     return (
