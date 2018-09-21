@@ -55,7 +55,7 @@ class SearchContainer extends Component {
         this.setState({ error: true });
       }
     } catch (err) {
-      swal('Ops! :(', 'An error has occurred.', 'error');
+      swal('Ops! ☹️', 'An error has occurred.', 'error');
       console.log(err);
     }
     this.setState({ loading: false });
@@ -95,7 +95,6 @@ class SearchContainer extends Component {
   };
 
   handleClick = event => {
-    console.log(event.target);
     const target = event.target;
     const element = target.closest('.playlist-card');
     this.setState({ playlist: element.getAttribute('data-id') });

@@ -24,6 +24,7 @@ header .content {
 
 header p {
   font-size: 1.9em;
+  transform: translateY(-50%);
 }
 
 .search {
