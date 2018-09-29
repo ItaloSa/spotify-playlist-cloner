@@ -96,7 +96,11 @@ class SearchContainer extends Component {
 
   handleClick = event => {
     const target = event.target;
-    const element = target.closest('.playlist-card');
+    const element = target.closest('.playlist-card') || null;
+
+    if (!element)
+      return;
+
     this.setState({ playlist: element.getAttribute('data-id') });
   };
 
