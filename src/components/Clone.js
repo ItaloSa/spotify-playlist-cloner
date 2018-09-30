@@ -14,7 +14,7 @@ class Clone extends Component {
       percentage: 0,
       playlist: this.props.location.state.playlist,
       tracks: [],
-      uris: []
+      uris: [],
     }
 
     this.http = Axios.create({
@@ -23,7 +23,9 @@ class Clone extends Component {
         Authorization: `${this.props.authData.tokenType} ${this.props.authData.accessToken}`
       }
     });
+  }
 
+  componentDidMount() {
     this.clonePlaylist();
   }
 
@@ -80,7 +82,7 @@ class Clone extends Component {
       while (response.data.next) {
         response = await this.http.get(response.data.next);
         response.data.items.forEach(item => tracks.push(item));
-        console.log('TRACKS Next', response);
+        console.log('TRACKS', response);
       }
 
       this.setState({ percentage: this.state.percentage + 15 });
@@ -95,7 +97,7 @@ class Clone extends Component {
     this.setState({ message: 'Saving tracks...' });
     const value = 25 / tracks.length;
     await this.asyncForEach(tracks, async track => {
-      await this.delay(25);
+      await this.delay(20);
       this.setState({
         tracks: [...this.state.tracks, track],
         percentage: this.state.percentage + value
@@ -108,7 +110,7 @@ class Clone extends Component {
     try {
       const data = this.playlistPreferences(playlist);
       const playlistClone = await this.http.post(`/users/${userId}/playlists`, data);
-      this.setState({ percentage: this.state.percentage + 10 });
+      this.setState({ percentage: this.state.percentage + 15 });
       console.log('NEW PLAYLIST', playlistClone);
       return playlistClone.data;
     } catch (err) {
@@ -119,10 +121,10 @@ class Clone extends Component {
 
   getTracksURIs = async () => {
     this.setState({ message: 'Preparing tracks...' });
-    const value = 20 / this.state.tracks.length;
+    const value = 15 / this.state.tracks.length;
     console.log('Tracks State', this.state.tracks);
     await this.asyncForEach(this.state.tracks, async track => {
-      await this.delay(25);
+      await this.delay(1);
       let uri = track.track.uri.indexOf(':track:') > 0 ? track.track.uri : null;
       this.setState({
         uris: uri ? [...this.state.uris, uri] : this.state.uris,
@@ -149,7 +151,6 @@ class Clone extends Component {
       const uris = this.makeQueue();
       const value = 15 / uris.length;
       await this.asyncForEach(uris, async arr => {
-        console.log('Each URIS:', arr);
         await this.http.post(`/playlists/${playlistId}/tracks`, { uris: arr });
         this.setState({ percentage: this.state.percentage + value });
       });
@@ -164,12 +165,12 @@ class Clone extends Component {
     }
   };
 
-  playlistPreferences(playlist) {
+  playlistPreferences = playlist => {
     return {
       name: playlist.name,
       description: 'Clone by Spotify Playlist Cloner 🎶'
     }
-  }
+  };
 
   delay = time => new Promise((resolve, reject) => {
     setTimeout(resolve, time);

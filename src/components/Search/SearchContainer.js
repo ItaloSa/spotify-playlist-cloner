@@ -124,9 +124,10 @@ class SearchContainer extends Component {
               <div className="search">
                 <DebounceInput
                   minLength={2}
-                  debounceTimeout={350}
+                  debounceTimeout={400}
                   type="search"
                   onChange={this.handleChange}
+                  onSubmit={this.handleChange}
                   placeholder="Search playlist name or URL"
                   disabled={this.state.loading}
                   className={classNames(
