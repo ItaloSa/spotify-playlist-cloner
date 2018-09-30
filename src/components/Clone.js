@@ -34,7 +34,7 @@ class Clone extends Component {
       const playlist = await this.playlist(this.state.playlist);
 
       const tracks = await this.playlistTracks(this.state.playlist);
-      await this.addTracksToState(tracks.data.items);
+      await this.addTracksToState(tracks);
       console.log(user);
 
       const playlistClone = await this.createPlaylist(user.id, playlist);
@@ -50,6 +50,7 @@ class Clone extends Component {
     try {
       const user = await this.http.get(`/me`);
       console.log('USER', user);
+      this.setState({ percentage: this.state.percentage + 5 });
       return user.data;
     } catch (err) {
       swal('Ops! ☹️', 'An error has occurred.', 'error');
@@ -61,6 +62,7 @@ class Clone extends Component {
     try {
       const playlist = await this.http.get(`/playlists/${playlistId}`);
       console.log('PLAYLIST', playlist);
+      this.setState({ percentage: this.state.percentage + 10 });
       return playlist.data;
     } catch (err) {
       swal('Ops! ☹️', 'An error has occurred.', 'error');
@@ -71,9 +73,17 @@ class Clone extends Component {
   playlistTracks = async playlistId => {
     this.setState({ message: 'Searching tracks...' });
     try {
-      const tracks = await this.http.get(`/playlists/${playlistId}/tracks`);
-      this.setState({ percentage: this.state.percentage + 10 });
-      console.log('TRACKS', tracks);
+      let response = await this.http.get(`/playlists/${playlistId}/tracks`);
+      const tracks = response.data.items;
+      console.log('TRACKS', response);
+
+      while (response.data.next) {
+        response = await this.http.get(response.data.next);
+        response.data.items.forEach(item => tracks.push(item));
+        console.log('TRACKS Next', response);
+      }
+
+      this.setState({ percentage: this.state.percentage + 15 });
       return tracks;
     } catch (err) {
       swal('Ops! ☹️', 'An error has occurred.', 'error');
@@ -83,9 +93,9 @@ class Clone extends Component {
 
   addTracksToState = async tracks => {
     this.setState({ message: 'Saving tracks...' });
-    const value = 40 / tracks.length;
+    const value = 25 / tracks.length;
     await this.asyncForEach(tracks, async track => {
-      await this.delay(50);
+      await this.delay(25);
       this.setState({
         tracks: [...this.state.tracks, track],
         percentage: this.state.percentage + value
@@ -109,20 +119,41 @@ class Clone extends Component {
 
   getTracksURIs = async () => {
     this.setState({ message: 'Preparing tracks...' });
-    const value = 40 / this.state.tracks.length;
+    const value = 20 / this.state.tracks.length;
+    console.log('Tracks State', this.state.tracks);
     await this.asyncForEach(this.state.tracks, async track => {
-      await this.delay(50);
+      await this.delay(25);
+      let uri = track.track.uri.indexOf(':track:') > 0 ? track.track.uri : null;
       this.setState({
-        uris: [...this.state.uris, track.track.uri],
+        uris: uri ? [...this.state.uris, uri] : this.state.uris,
         percentage: this.state.percentage + value
       });
     });
   };
 
+  makeQueue = () => {
+    const uris = this.state.uris;
+    const pages = Math.ceil(uris.length / 100);
+    const array = [];
+
+    for (let i = 0; i < pages; i++) {
+      array.push(uris.splice(0, 100));
+    }
+
+    return array;
+  };
+
   addTracksToPlaylist = async (playlistId, playlistURL) => {
     this.setState({ message: 'Adding tracks to playlist...' });
     try {
-      const response = await this.http.post(`/playlists/${playlistId}/tracks`, { uris: this.state.uris });
+      const uris = this.makeQueue();
+      const value = 15 / uris.length;
+      await this.asyncForEach(uris, async arr => {
+        console.log('Each URIS:', arr);
+        await this.http.post(`/playlists/${playlistId}/tracks`, { uris: arr });
+        this.setState({ percentage: this.state.percentage + value });
+      });
+
       swal('Yeah! 👏', 'Playlist cloned with success!', 'success').then(() => {
         this.setState({ playlist: '' });
         window.open(playlistURL, '_blank');
