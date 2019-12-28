@@ -155,7 +155,7 @@ class Clone extends Component {
         this.setState({ percentage: this.state.percentage + value });
       });
 
-      swal('Yeah! 👏', 'Playlist cloned with success!', 'success').then(() => {
+      swal('Yeah! 👏', 'Playlist successfully cloned!', 'success').then(() => {
         this.setState({ playlist: '' });
         window.open(playlistURL, '_blank');
       });
